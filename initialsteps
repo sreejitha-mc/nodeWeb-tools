@@ -1,0 +1,39 @@
+starting steps:-
+
+1. sudo -s
+2. code . --user-data-dir
+3. docker run -it bc/cert-issuer:1.0 bash :-for assign docker
+4. verify the certificate - change verifying method as from local block chain 
+
+   4.1. issuer=`bitcoin-cli -regtest getnewaddress`
+   4.2. sed -i.bak "s/<issuing-address>/$issuer/g" /etc/cert-issuer/conf.ini
+   4.3. bitcoin-cli -regtest dumpprivkey $issuer > /etc/cert-issuer/pk_issuer.txt
+5.  bitcoin-cli -regtest generatetoaddress 101 $issuer
+    bitcoin-cli -regtest getbalance
+
+
+        bitcoin-cli -regtest sendtoaddress $issuer 5 
+    bitcoin-cli -regtest getbalance
+
+
+6.new window open
+    6.1. open server.js
+    6.2. sudo sysctl fs.inotify.max_user_watches=582222 && sudo sysctl -p
+    6.3. nodemon server.js
+    6.4. when this error occur
+        
+    Error: listen EADDRINUSE: address already in use :::8081
+    do:-    sudo lsof -i :8081
+            kill -9 pid
+    
+7.for verification of certificate
+    7.1.start polmer so do in terminal ----polymer serve---- from location code/project/cert-web-component
+
+    
+    
+    verifier -link - done
+    intitution - home page - done
+    register - message design - done
+    setting bkgcolor - done
+    student home page
+    

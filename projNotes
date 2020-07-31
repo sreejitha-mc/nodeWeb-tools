@@ -1,0 +1,345 @@
+
+software install support links
+==============================
+1. https://help.dreamhost.com/hc/en-us/articles/115000695551-Installing-and-using-virtualenv-with-Python-3
+2. https://unix.stackexchange.com/questions/363048/unable-to-locate-package-docker-ce-on-a-64bit-ubuntu
+3. https://bitcoin.org/en/developer-examples#simple-spending
+
+
+issuer=`bitcoin-cli -regtest getnewaddress`
+sed -i.bak "s/<issuing-address>/$issuer/g" /etc/cert-issuer/conf.ini
+bitcoin-cli -regtest dumpprivkey $issuer > /etc/cert-issuer/pk_issuer.txt
+
+
+
+l
+
+docker ps  // shows the docker containerId
+docker cp <containerId>:/etc/cert-issuer/data/blockchain_certificates <localPath>/cert-viewer/cert_data
+
+
+copy files from docker to system directory:-
+docker cp 690eca37fbd0:/etc/cert-issuer/data/blockchain_certificates /home/viji/code/project/cert-issuer/output
+
+copy files from system directory to docker:-
+docker cp /home/viji/code/project/cert-tools/sample_data/certificate_templates/test.json 71c62c14e9fd:/etc/cert-issuer/data/unsigned_certificates/test.json
+
+
+docker cp 71c62c14e9fd:/etc/cert-issuer/data/blockchain_certificates /home/viji/code/project/cert-web-component/demo
+
+
+71c62c14e9fd
+
+# To use a sample unsigned certificate as follows:
+cp /cert-issuer/examples/data-testnet/unsigned_certificates/3bc1a96a-3501-46ed-8f75-49612bbac257.json /etc/cert-issuer/data/unsigned_certificates/
+
+
+
+
+
+todo
+=========
+1. create cert tool template from web invoked - completed
+
+https://www.tutorialspoint.com/nodejs/nodejs_express_framework.htm
+
+2. create dynamic template 
+3. issue certificate web invoked - completed
+
+bitcoind -regtest -daemon
+
+issuer=`bitcoin-cli -regtest getnewaddress`
+sed -i.bak "s/<issuing-address>/$issuer/g" conf.ini
+bitcoin-cli -regtest dumpprivkey $issuer > pk_issuer.txt
+
+bitcoin-cli -regtest generatetoaddress 101 $issuer
+bitcoin-cli -regtest getbalance
+
+
+bitcoin-cli -regtest sendtoaddress $issuer 5 
+bitcoin-cli -regtest getbalance
+
+bitcoin-cli -regtest stop
+
+
+
+docker run -it bc/cert-issuer:1.0 bash
+
+curl --unix-socket /var/run/docker.sock -H "Content-Type: application/json" \
+  -d '{"Image": "bc/cert-issuer:1.0 bash"}' \
+  -X POST http:/v1.24/containers/create
+
+
+curl --unix-socket /var/run/docker.sock -H "Content-Type: application/json" \
+  -d '{"Image": "bc/cert-issuer:1.0"}' \
+  -X POST http:/v1.24/containers/create
+  
+
+curl --unix-socket /var/run/docker.sock -X POST http:/v1.24/containers/79efb7d6e6a32d918f7680e39d8d4690e2f495b8ee6d78c033f18aff3b6c0bf0/start
+
+curl --unix-socket /var/run/docker.sock "http:/v1.24/containers/0d72ebe5d577/logs?stdout=1"
+
+
+docker exec -it <container_id_or_name> echo "I'm inside the container!"
+
+docker exec -it 0d72ebe5d577 echo "I'm inside the container!"
+
+docker exec -it 8b2cf5411948 cat /etc/cert-issuer/conf.ini
+
+
+docker cp /home/viji/code/project/cert-tools/sample_data/certificate_templates/test.json 1e0800a12690:/etc/cert-issuer/data/unsigned_certificates/test.json
+
+
+docker cp 8b2cf5411948:/etc/cert-issuer/data/blockchain_certificates /home/viji/code/project/cert-web-component/demo
+
+docker cp 3bf5b3f201b2:/etc/cert-issuer/data/blockchain_certificates /home/viji/code/project/cert-web-component/demo
+
+docker cp 1e0800a12690:/etc/cert-issuer/data/blockchain_certificates /home/viji/code/project/cert-web-component/demo
+
+
+
+4. verify the certificate - change verifying method as from local block chain 
+
+issuer=`bitcoin-cli -regtest getnewaddress`
+sed -i.bak "s/<issuing-address>/$issuer/g" /etc/cert-issuer/conf.ini
+bitcoin-cli -regtest dumpprivkey $issuer > /etc/cert-issuer/pk_issuer.txt
+
+
+
+bitcoin-cli -regtest sendtoaddress $issuer 5
+
+
+cert-issuer -c /etc/cert-issuer/conf.ini
+
+
+docker exec -it 1e0800a12690 bitcoind -regtest -daemon
+
+
+2420.24
+
+867 - jan
+690
+863
+
+
+var chainSoUrl = 'http://localhost:8081/tranlist?tranId='+transactionId;
+  console.log(chainSoUrl);
+  
+  function parseBlockCypherResponse(jsonResponse) {
+  if (jsonResponse.confirmations < _default.MininumConfirmations) {
+    throw new _default.VerifierError("Number of transaction confirmations were less than the minimum required, according to Blockcypher API");
+  }
+  var time = Date.parse(jsonResponse.received);
+  var outputs = jsonResponse.outputs;
+  var lastOutput = outputs[outputs.length - 1];
+  var issuingAddress = jsonResponse.inputs[0].addresses[0];
+  var opReturnScript = cleanupRemoteHash(lastOutput.script);
+  var revokedAddresses = outputs.filter(function (output) {
+    return !!output.spent_by;
+  }).map(function (output) {
+    return output.addresses[0];
+  });
+  console.log(opReturnScript);
+  console.log(issuingAddress);
+  console.log(time);
+  console.log(revokedAddresses);
+  return new _verifierModels.TransactionData(opReturnScript, issuingAddress, time, revokedAddresses);
+};
+
+bitcoin-cli -regtest gettransaction 3d59eb1bf8d9277796c23e5162cf4ca58b45ac519d4ad621b3eb437bc6929a2c
+
+decoderawtransaction "hexstring"
+
+
+function ensureValidIssuingKey(keyMap, txIssuingAddress, txTime) {
+  var validKey = false;
+  console.log(keyMap);
+  console.log(txIssuingAddress);
+  console.log(txTime);
+  // if (keyMap) {
+  //   validKey = true;
+  //   //var theKey = keyMap[txIssuingAddress];
+  //   var theKey = keyMap[0];
+  //   console.log(theKey);
+  //   if (theKey.created) {
+  //     validKey &= txTime >= theKey.created;
+  //   }
+  //   if (theKey.revoked) {
+  //     validKey &= txTime <= theKey.revoked;
+  //   }
+  //   if (theKey.expires) {
+  //     validKey &= txTime <= theKey.expires;
+  //   }
+  // }
+
+
+  for (let [key, value] of Object.entries(keyMap)) {
+      validKey = true;
+      var theKey = value;
+      console.log(theKey);
+      if (theKey.created) {
+        console.log(txTime);
+        console.log(theKey.created);
+        console.log(txTime >= theKey.created);
+        validKey &= txTime >= theKey.created;
+      }
+      console.log(validKey);
+      // if (theKey.revoked) {
+      //   validKey &= txTime <= theKey.revoked;
+      // }
+      // if (theKey.expires) {
+      //   validKey &= txTime <= theKey.expires;
+      // }
+  }
+
+  if (!validKey) {
+    throw new _default.VerifierError("Transaction occurred at time when issuing address was not considered valid.");
+  }
+};
+
+07-03-20
+=========
+
+1. template create dynamic
+
+cert description - badge.description - completed
+cert name - badge.name - completed
+cert image - badge.image
+
+university image - issuer.image
+signature - signatureLines
+
+student name - recipientProfile.name - 
+issued date - 
+
+
+create-certificate-template -c /home/viji/code/project/cert-tools/conf.ini --issuer_name 'test issuer' --certificate_description 'test description' --certificate_title 'test cert title' --student_name 'teststudent'
+
+add student name - done
+add issued date - done
+to template create logic
+
+
+
+
+Namespace(
+abs_data_dir='/home/viji/code/project/cert-tools/sample_data', 
+additional_global_fields=[{'path': '$.displayHtml', 'value': '<h1>Some html code</h1>'}, {'path': '$.@context', 'value': ['https://w3id.org/openbadges/v2', 'https://w3id.org/blockcerts/v2', {'displayHtml': {'@id': 'schema:description'}}]}],
+additional_per_recipient_fields=None, 
+badge_id='82a4c9f2-3588-457b-80ea-da695571b8fc', 
+cert_image_file='images/certificate-image.png', 
+certificate_description='Lorem ipsum dolor sit amet, mei docendi concludaturque ad, cu nec partem graece. Est aperiam consetetur cu, expetenda moderatius neglegentur ei nam, suas dolor laudem eam an.', 
+certificate_title='Certificate of Accomplishment', criteria_narrative='Nibh iriure ei nam, modo ridens neglegentur mel eu. At his cibo mucius.', 
+data_dir='sample_data', 
+display_html=None, 
+hash_emails=False, 
+
+issuer_certs_url=None, 
+issuer_email='contact@issuer.org', 
+issuer_id='https://www.blockcerts.org/samples/2.0/issuer-testnet.json', 
+issuer_key=None, 
+issuer_logo_file='images/logo.png', 
+issuer_name='University of Learning', 
+issuer_public_key='ecdsa-koblitz-pubkey:msBCHdwaQ7N2ypBYupkp6uNxtr9Pg76imj', 
+issuer_signature_lines=[{'job_title': 'University Issuer', 'signature_image': 'images/issuer-signature.png', 'name': 'Your signature'}], 
+issuer_url='https://www.issuer.org', 
+
+my_config='/home/viji/code/project/cert-tools/conf.ini', 
+revocation_list='https://www.blockcerts.org/samples/2.0/revocation-list-testnet.json', 
+template_dir='certificate_templates', 
+template_file_name='test.json'
+)
+
+2.
+dynamic docker id selection in node and sh script - completed
+
+pkill -f node
+
+
+
+
+3. plan and structure
+    a. entire application with db
+    b. verifier on html
+
+
+    
+    
+    phpmyadmin / root
+    
+    
+    
+ 10-03-20
+ ========
+ 
+ 1. update in node - for passing parameters in template - completed
+ 2. update in node for issuing - completed
+ 
+ 
+ #!/bin/sh
+#!/bin/bash
+echo "First arg: $1"
+echo "Second arg: $2"
+
+# docker exec $1 echo "I'm inside the container!"
+# echo $2
+# cat /home/viji/code/project/cert-tools/sample_data/certificate_templates/$2
+# docker cp /home/viji/code/project/cert-tools/sample_data/certificate_templates/$2 $1:/etc/cert-issuer/data/unsigned_certificates/$2
+
+# docker exec $1 cert-issuer -c /etc/cert-issuer/conf.ini
+
+# docker cp $1:/etc/cert-issuer/data/blockchain_certificates/$2 /home/viji/code/project/cert-web-component/demo/blockchain_certificates/$2
+
+
+
+
+
+
+ 3. viewing part update for custom certificate
+    
+    
+
+    
+17-04-20
+===========
+
+create-certificate-template -c /home/viji/code/project/cert-tools/conf.ini --issuer_name  KTU --certificate_description  Bachelor of Technology on having attended the prescribed course of instructions and fulfilling the requisite professional standard in the subject assessed through written examinations,projects and a dissertation. --certificate_title  Certificate of Accomplishment --student_name test --template_file_name sgi16cs038.json
+
+
+stdout: Writing template to /home/viji/code/project/cert-tools/sample_data/certificate_templates/sgi16cs038.json
+
+
+Upload project files to github
+==============================
+1. nodejs - nodeWeb-tools
+https://github.com/sreejitha-mc/nodeWeb-tools.git
+
+2. php - /var/www/html
+git@github.com:sreejitha-mc/php-opencerts.git
+
+3. cert-web-component
+git@github.com:sreejitha-mc/cert-web-component.git
+
+4. cert-tools
+git@github.com:sreejitha-mc/cert-tools.git
+
+5. cert-issuer
+git@github.com:sreejitha-mc/cert-issuer.git
+
+6. issue-shell.sh
+
+
+
+
+
+
+1. design verifier view
+2. file browse upload in ajax
+3. once upload complete start verification action
+4. display verification process
+5. display ceritificate with verification details
+
+
+
+
+    
